@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { CreditCard } from 'lucide-react'
 import { SplineScene } from '@/components/ui/splite'
-import { Spotlight } from '@/components/ui/spotlight'
-import { Card } from '@/components/ui/card'
 
 export function Hero() {
   const [titleNumber, setTitleNumber] = useState(0)
@@ -32,16 +30,11 @@ export function Hero() {
         <span className="text-lg font-semibold tracking-tight text-foreground">Spendsheet</span>
       </div>
 
-      <Card className="w-full h-[500px] bg-black/[0.96] relative overflow-hidden border-border">
-        <Spotlight
-          className="-top-40 left-0 md:left-60 md:-top-20"
-          fill="#7FD858"
-        />
-
-        <div className="flex h-full">
+      <div className="w-full min-h-[420px] relative overflow-hidden">
+        <div className="flex h-full min-h-[420px]">
           {/* Left content */}
-          <div className="flex-1 p-8 md:p-12 relative z-10 flex flex-col justify-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
+          <div className="flex-1 py-8 md:py-16 relative z-10 flex flex-col justify-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-tight">
               <span>Your spending,</span>
               <span className="relative flex w-full overflow-hidden md:pb-4 md:pt-1">
                 &nbsp;
@@ -76,7 +69,7 @@ export function Hero() {
             />
           </div>
         </div>
-      </Card>
+      </div>
     </section>
   )
 }

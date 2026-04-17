@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DM_Sans } from 'next/font/google'
+import { ShaderBackground } from '@/components/ui/shader-background'
 import './globals.css'
 
 const dmSans = DM_Sans({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
@@ -29,7 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark bg-background">
       <body className={`${dmSans.className} antialiased`}>
-        {children}
+        <ShaderBackground />
+        <div className="relative z-10">
+          {children}
+        </div>
       </body>
     </html>
   )

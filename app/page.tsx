@@ -139,7 +139,7 @@ export default function SpendsheetPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen">
       <div className="max-w-5xl mx-auto px-4 pb-16">
         {appState === 'report' ? (
           <div className="pt-8">
