@@ -297,7 +297,10 @@ export function ReportView({
 
       {/* Transaction Table */}
       <section className="space-y-3">
-        <h2 className="text-xl font-medium text-foreground">All Transactions</h2>
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-xl font-medium text-foreground">All Transactions</h2>
+          <p className="text-xs text-muted-foreground">Click any category to re-assign it — totals and insights update instantly.</p>
+        </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
