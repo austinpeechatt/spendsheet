@@ -182,8 +182,19 @@ export function parseCSV(content: string, fileName: string): ParsedFile {
     const dateStr = values[dateIdx]
     const description = values[descIdx]
 
-    // Skip empty descriptions or payment rows
+    // Skip empty descriptions
     if (!description || description.trim() === '') continue
+
+    // Skip autopay/payment rows — these are credit card bill payments, not spending
+    const descLower = description.toLowerCase()
+    if (
+      descLower.includes('autopay') ||
+      descLower.includes('automatic payment') ||
+      descLower.includes('payment - thank') ||
+      descLower.includes('autopay pymt') ||
+      descLower.includes('online payment') ||
+      descLower.includes('directpay full balance')
+    ) continue
 
     let amount: number
     if (amountIdx >= 0) {

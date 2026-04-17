@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import { Copy, Download, Save, RotateCcw, Check, CreditCard } from 'lucide-react'
+import { Copy, Download, Save, RotateCcw, Check, CreditCard, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -51,6 +51,7 @@ export function ReportView({
   const [saved, setSaved] = useState(false)
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [editingCell, setEditingCell] = useState<{ id: string; field: 'category' | 'amount' } | null>(null)
 
   const reportData: ReportData = useMemo(
@@ -120,6 +121,23 @@ export function ReportView({
     )
     setEditingCell(null)
   }, [])
+
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }, [])
+
+  const deleteSelected = useCallback(() => {
+    setTransactions((prev) => prev.filter((t) => !selectedIds.has(t.id)))
+    setSelectedIds(new Set())
+  }, [selectedIds])
 
   const copyInsights = () => {
     const text = `${reportData.month} ${reportData.year} Spending Summary\n\n${reportData.insights.map((i) => `• ${i}`).join('\n')}`
@@ -297,14 +315,23 @@ export function ReportView({
 
       {/* Transaction Table */}
       <section className="space-y-3">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-xl font-medium text-foreground">All Transactions</h2>
-          <p className="text-xs text-muted-foreground">Click any category to re-assign it — totals and insights update instantly.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-medium text-foreground">All Transactions</h2>
+            <p className="text-xs text-muted-foreground mt-1">Click any category to re-assign it — totals and insights update instantly.</p>
+          </div>
+          {selectedIds.size > 0 && (
+            <Button variant="destructive" size="sm" onClick={deleteSelected} className="print:hidden">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete {selectedIds.size} selected
+            </Button>
+          )}
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-b-2 border-border">
+                <TableHead className="w-10 py-3 print:hidden" />
                 <TableHead
                   className="cursor-pointer hover:text-foreground transition-colors text-xs font-bold uppercase tracking-wider text-muted-foreground py-3"
                   onClick={() => handleSort('date')}
@@ -339,7 +366,15 @@ export function ReportView({
             </TableHeader>
             <TableBody>
               {sortedTransactions.map((t) => (
-                <TableRow key={t.id} className="hover:bg-secondary/50">
+                <TableRow key={t.id} className={`hover:bg-secondary/50 ${selectedIds.has(t.id) ? 'bg-secondary/30' : ''}`}>
+                  <TableCell className="print:hidden">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(t.id)}
+                      onChange={() => toggleSelect(t.id)}
+                      className="w-4 h-4 rounded border-border accent-accent cursor-pointer"
+                    />
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {new Date(t.date).toLocaleDateString('en-US', {
                       month: 'short',
