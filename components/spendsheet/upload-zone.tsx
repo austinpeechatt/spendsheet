@@ -34,6 +34,11 @@ export function UploadZone({ onTransactionsReady }: UploadZoneProps) {
       return
     }
 
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File is too large (max 5MB). Try exporting just one month.")
+      return
+    }
+
     try {
       const content = await file.text()
       const parsed = parseCSV(content, file.name)

@@ -12,13 +12,49 @@ interface CategorizeRequest {
   userNotes?: string
 }
 
+// Simple in-memory rate limiter (resets on cold start, which is fine for Vercel)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+const RATE_LIMIT = 10 // requests per window
+const RATE_WINDOW = 60 * 1000 // 1 minute
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const record = rateLimitMap.get(ip)
+
+  if (!record || now > record.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_WINDOW })
+    return false
+  }
+
+  record.count++
+  if (record.count > RATE_LIMIT) {
+    return true
+  }
+
+  return false
+}
+
 export async function POST(request: Request) {
   try {
+    // Rate limit by IP
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please wait a minute and try again.' },
+        { status: 429 }
+      )
+    }
+
     const body: CategorizeRequest = await request.json()
     const { transactions, categories, userNotes } = body
 
     if (!transactions || transactions.length === 0) {
       return NextResponse.json({ error: 'No transactions provided' }, { status: 400 })
+    }
+
+    // Cap transactions per request to prevent abuse
+    if (transactions.length > 500) {
+      return NextResponse.json({ error: 'Too many transactions. Please upload one month at a time.' }, { status: 400 })
     }
 
     // Create a prompt for categorization
@@ -36,13 +72,12 @@ Respond with ONLY a JSON array where each object has "id" and "category" fields.
 Example: [{"id": "0", "category": "Groceries"}, {"id": "1", "category": "Transportation"}]
 
 Rules:
-- Use "Misc" for anything that doesn't clearly fit
+- Use "Uncategorized" for anything that doesn't clearly fit
 - "Drinks" is for bars and alcohol
 - "Food" is for delivery/takeout
 - "Dining Out" is for sit-down restaurants
 - Refunds (negative amounts) should still be categorized by what they were for`
 
-    // Call Anthropic API via Vercel AI Gateway
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -66,7 +101,7 @@ Rules:
       const error = await response.text()
       console.error('Anthropic API error:', error)
       return NextResponse.json(
-        { error: 'AI categorization failed. Please try again.' },
+        { error: 'Something went wrong on our end. Your data is still safe in your browser.' },
         { status: 500 }
       )
     }

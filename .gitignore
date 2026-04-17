@@ -14,3 +14,8 @@ next.user-config.*
 node_modules
 .next/
 .DS_Store
+
+# Sensitive financial data — never commit real statements
+March 2026 credit statements/
+*.xlsx
+SpendSheet Logo.png
