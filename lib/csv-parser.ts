@@ -171,8 +171,8 @@ export function parseCSV(content: string, fileName: string): ParsedFile {
   const dateIdx = headers.findIndex(h => h.toLowerCase().trim() === format.dateColumn.toLowerCase())
   const descIdx = headers.findIndex(h => h.toLowerCase().trim() === format.descriptionColumn.toLowerCase())
   const amountIdx = format.amountColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.amountColumn.toLowerCase()) : -1
-  const debitIdx = format.debitColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.debitColumn.toLowerCase()) : -1
-  const creditIdx = format.creditColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.creditColumn.toLowerCase()) : -1
+  const debitIdx = format.debitColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.debitColumn!.toLowerCase()) : -1
+  const creditIdx = format.creditColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.creditColumn!.toLowerCase()) : -1
 
   // Start parsing from the row AFTER the header
   for (let i = headerIndex + 1; i < lines.length; i++) {
