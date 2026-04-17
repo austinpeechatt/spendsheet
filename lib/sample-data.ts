@@ -1,6 +1,37 @@
 import type { Transaction } from './types'
 
 export const SAMPLE_TRANSACTIONS: Transaction[] = [
+  // ── February 2026 ──
+  { id: 'f1', date: '2026-02-01', description: 'WHOLE FOODS MARKET', amount: 94.21, category: 'Groceries', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f2', date: '2026-02-02', description: 'UBER TRIP', amount: 31.50, category: 'Transportation', paymentMethod: 'Chase Sapphire', originalRow: {} },
+  { id: 'f3', date: '2026-02-03', description: 'HULU SUBSCRIPTION', amount: 17.99, category: 'Entertainment', paymentMethod: 'Chase Freedom', originalRow: {} },
+  { id: 'f4', date: '2026-02-04', description: 'TRADER JOES', amount: 63.47, category: 'Groceries', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f5', date: '2026-02-05', description: 'SPOTIFY USA', amount: 10.99, category: 'Membership', paymentMethod: 'Discover', originalRow: {} },
+  { id: 'f6', date: '2026-02-06', description: 'SHAKE SHACK', amount: 19.45, category: 'Dining Out', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f7', date: '2026-02-07', description: 'CVS PHARMACY', amount: 31.22, category: 'Personal Care', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f8', date: '2026-02-08', description: 'LYFT RIDE', amount: 22.00, category: 'Transportation', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f9', date: '2026-02-09', description: 'AMAZON.COM', amount: 47.89, category: 'Shopping', paymentMethod: 'Chase Sapphire', originalRow: {} },
+  { id: 'f10', date: '2026-02-10', description: 'CHIPOTLE', amount: 15.75, category: 'Dining Out', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f11', date: '2026-02-11', description: 'NETFLIX.COM', amount: 15.99, category: 'Entertainment', paymentMethod: 'Chase Freedom', originalRow: {} },
+  { id: 'f12', date: '2026-02-12', description: 'BLUE BOTTLE COFFEE', amount: 6.50, category: 'Drinks', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f13', date: '2026-02-13', description: 'VALENTINES DINNER NOBU', amount: 185.00, category: 'Dining Out', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f14', date: '2026-02-14', description: 'BOUQS FLOWERS', amount: 65.00, category: 'Gifts', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f15', date: '2026-02-15', description: 'CON EDISON', amount: 102.00, category: 'Utilities', paymentMethod: 'Chase Freedom', originalRow: {} },
+  { id: 'f16', date: '2026-02-16', description: 'EQUINOX MEMBERSHIP', amount: 220.00, category: 'Membership', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f17', date: '2026-02-17', description: 'TARGET', amount: 43.56, category: 'Shopping', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f18', date: '2026-02-18', description: 'DOORDASH PAD THAI', amount: 29.90, category: 'Food', paymentMethod: 'Chase Sapphire', originalRow: {} },
+  { id: 'f19', date: '2026-02-19', description: 'MTA METROCARD', amount: 33.00, category: 'Transportation', paymentMethod: 'Chase Freedom', originalRow: {} },
+  { id: 'f20', date: '2026-02-20', description: 'PLEASE DONT TELL NYC', amount: 88.00, category: 'Drinks', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f21', date: '2026-02-21', description: 'UNIQLO NYC', amount: 74.00, category: 'Shopping', paymentMethod: 'Discover', originalRow: {} },
+  { id: 'f22', date: '2026-02-22', description: 'SWEETGREEN', amount: 16.95, category: 'Dining Out', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f23', date: '2026-02-23', description: 'GRUBHUB SUSHI', amount: 35.50, category: 'Food', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f24', date: '2026-02-24', description: 'BOOK CULTURE NYC', amount: 28.99, category: 'Education', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f25', date: '2026-02-25', description: 'REFUND - UNIQLO', amount: -34.00, category: 'Shopping', paymentMethod: 'Discover', originalRow: {} },
+  { id: 'f26', date: '2026-02-26', description: 'DOLLAR SHAVE CLUB', amount: 12.00, category: 'Personal Care', paymentMethod: 'Capital One', originalRow: {} },
+  { id: 'f27', date: '2026-02-27', description: 'UBER EATS RAMEN', amount: 26.80, category: 'Food', paymentMethod: 'Amex', originalRow: {} },
+  { id: 'f28', date: '2026-02-28', description: 'APPLE.COM/BILL', amount: 14.99, category: 'Membership', paymentMethod: 'Chase Sapphire', originalRow: {} },
+
+  // ── March 2026 ──
   { id: 's1', date: '2026-03-01', description: 'WHOLE FOODS MARKET', amount: 87.43, category: 'Groceries', paymentMethod: 'Amex', originalRow: {} },
   { id: 's2', date: '2026-03-02', description: 'UBER TRIP', amount: 24.50, category: 'Transportation', paymentMethod: 'Chase Sapphire', originalRow: {} },
   { id: 's3', date: '2026-03-03', description: 'THE DELANCEY NYC', amount: 68.00, category: 'Drinks', paymentMethod: 'Amex', originalRow: {} },
