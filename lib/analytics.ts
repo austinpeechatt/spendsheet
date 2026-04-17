@@ -1,7 +1,7 @@
 /**
- * Plausible analytics event tracking.
- * Events are only sent in production (Plausible script must be loaded).
- * No cookies, no personal data, GDPR-compliant.
+ * Umami analytics event tracking.
+ * Events are only sent in production (Umami script must be loaded).
+ * No cookies, no personal data, GDPR-compliant, free tier.
  */
 
 type EventName =
@@ -13,12 +13,14 @@ type EventName =
 
 declare global {
   interface Window {
-    plausible?: (event: string, options?: { props?: Record<string, string | number> }) => void
+    umami?: {
+      track: (event: string, data?: Record<string, string | number>) => void
+    }
   }
 }
 
-export function trackEvent(name: EventName, props?: Record<string, string | number>) {
-  if (typeof window !== 'undefined' && window.plausible) {
-    window.plausible(name, props ? { props } : undefined)
+export function trackEvent(name: EventName, data?: Record<string, string | number>) {
+  if (typeof window !== 'undefined' && window.umami) {
+    window.umami.track(name, data)
   }
 }

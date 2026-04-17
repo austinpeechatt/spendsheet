@@ -33,8 +33,8 @@ export default function RootLayout({
       <head>
         <Script
           defer
-          data-domain="spendsheet.app"
-          src="https://plausible.io/js/script.js"
+          data-website-id="UMAMI_WEBSITE_ID"
+          src="https://cloud.umami.is/script.js"
           strategy="afterInteractive"
         />
       </head>
