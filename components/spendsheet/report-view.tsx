@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import { Copy, Download, Save, RotateCcw, Check, CreditCard } from 'lucide-react'
+import { Copy, Download, Save, RotateCcw, Check } from 'lucide-react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -30,6 +31,14 @@ interface ReportViewProps {
   categories: string[]
   onStartOver: () => void
 }
+
+const CHART_COLORS = [
+  '#7FD858', // accent green
+  '#5B9BD5', // blue
+  '#A67BCC', // purple
+  '#D4A843', // amber
+  '#D46B5B', // coral
+]
 
 type SortField = 'date' | 'description' | 'amount' | 'category' | 'paymentMethod'
 type SortDirection = 'asc' | 'desc'
@@ -87,7 +96,7 @@ export function ReportView({
       .map((p, index) => ({
         category: p.category,
         total: p.total,
-        fill: `hsl(var(--chart-${(index % 5) + 1}))`,
+        fill: CHART_COLORS[index % CHART_COLORS.length],
       }))
   }, [reportData.pivotData])
 
@@ -144,9 +153,9 @@ export function ReportView({
   return (
     <div className="space-y-8 print:space-y-4">
       {/* Sticky action buttons */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur py-4 -mx-4 px-4 flex items-center gap-3 border-b border-border print:hidden">
+      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur py-4 -mx-4 px-4 flex items-center gap-3 border-b border-border print:hidden">
         <div className="flex items-center gap-2 mr-auto">
-          <CreditCard className="w-5 h-5 text-accent" />
+          <Image src="/logo.png" alt="Spendsheet" width={24} height={24} className="invert brightness-90" />
           <span className="text-base font-semibold tracking-tight text-foreground">Spendsheet</span>
         </div>
         <Button variant="ghost" size="sm" onClick={onStartOver}>
@@ -192,8 +201,7 @@ export function ReportView({
           {reportData.insights.map((insight, idx) => (
             <li key={idx} className="flex items-start gap-3">
               <span
-                className="w-2 h-2 rounded-full mt-2 shrink-0"
-                style={{ backgroundColor: `hsl(var(--chart-${(idx % 5) + 1}))` }}
+                className="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 bg-accent"
               />
               <span className="text-muted-foreground">{insight}</span>
             </li>
@@ -222,13 +230,13 @@ export function ReportView({
                 <TableRow key={row.category} className="hover:bg-secondary/50">
                   <TableCell className="font-medium">{row.category}</TableCell>
                   {paymentMethods.map((pm) => (
-                    <TableCell key={pm} className="text-right font-mono text-sm">
+                    <TableCell key={pm} className="text-right text-sm">
                       {row.byPaymentMethod[pm]
                         ? formatCurrency(row.byPaymentMethod[pm])
                         : ''}
                     </TableCell>
                   ))}
-                  <TableCell className="text-right font-mono font-semibold">
+                  <TableCell className="text-right font-semibold">
                     {formatCurrency(row.total)}
                   </TableCell>
                 </TableRow>
@@ -236,11 +244,11 @@ export function ReportView({
               <TableRow className="bg-secondary/30 font-semibold hover:bg-secondary/50">
                 <TableCell>Grand Total</TableCell>
                 {paymentMethods.map((pm) => (
-                  <TableCell key={pm} className="text-right font-mono">
+                  <TableCell key={pm} className="text-right">
                     {formatCurrency(reportData.totalByPaymentMethod[pm] || 0)}
                   </TableCell>
                 ))}
-                <TableCell className="text-right font-mono">
+                <TableCell className="text-right">
                   {formatCurrency(reportData.grandTotal)}
                 </TableCell>
               </TableRow>
@@ -265,13 +273,13 @@ export function ReportView({
               <XAxis
                 type="number"
                 tickFormatter={(v) => `$${v}`}
-                stroke="hsl(var(--muted-foreground))"
+                stroke="#999999"
                 fontSize={12}
               />
               <YAxis
                 type="category"
                 dataKey="category"
-                stroke="hsl(var(--muted-foreground))"
+                stroke="#999999"
                 fontSize={12}
                 width={75}
               />
@@ -336,7 +344,7 @@ export function ReportView({
                   <TableCell className="max-w-xs truncate" title={t.description}>
                     {t.description}
                   </TableCell>
-                  <TableCell className="text-right font-mono">
+                  <TableCell className="text-right">
                     {editingCell?.id === t.id && editingCell.field === 'amount' ? (
                       <Input
                         type="number"

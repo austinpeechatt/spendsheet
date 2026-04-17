@@ -31,6 +31,9 @@ export const SAMPLE_TRANSACTIONS: Transaction[] = [
   { id: 's28', date: '2026-03-28', description: 'DEATH & CO NYC', amount: 92.00, category: 'Drinks', paymentMethod: 'Amex', originalRow: {} },
   { id: 's29', date: '2026-03-29', description: 'CITIBIKE ANNUAL', amount: 185.00, category: 'Transportation', paymentMethod: 'Amex', originalRow: {} },
   { id: 's30', date: '2026-03-30', description: 'GRUBHUB PIZZA', amount: 28.50, category: 'Food', paymentMethod: 'Amex', originalRow: {} },
+  { id: 's31', date: '2026-03-12', description: 'SQ *UNKNOWN VENDOR', amount: 34.00, category: '', paymentMethod: 'Amex', originalRow: {} },
+  { id: 's32', date: '2026-03-18', description: 'PAYPAL *INST XFER', amount: 75.00, category: '', paymentMethod: 'Chase Freedom', originalRow: {} },
+  { id: 's33', date: '2026-03-25', description: 'CHECK CARD PURCHASE 04/15', amount: 120.00, category: '', paymentMethod: 'Capital One', originalRow: {} },
 ]
 
 export function loadSampleData(): Transaction[] {

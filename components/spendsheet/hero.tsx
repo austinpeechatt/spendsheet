@@ -1,12 +1,12 @@
 'use client'
 
-import { CreditCard } from 'lucide-react'
+import Image from 'next/image'
 
 export function Hero() {
   return (
     <section className="pt-8 pb-12 px-4">
       <div className="flex items-center gap-2 mb-12">
-        <CreditCard className="w-6 h-6 text-accent" />
+        <Image src="/logo.png" alt="Spendsheet" width={32} height={32} className="invert brightness-90" />
         <span className="text-lg font-semibold tracking-tight text-foreground">Spendsheet</span>
       </div>
       <div className="text-center">
