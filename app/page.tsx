@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { trackEvent } from '@/lib/analytics'
 import { Hero } from '@/components/spendsheet/hero'
 import { SavedReports } from '@/components/spendsheet/saved-reports'
 import { UploadZone } from '@/components/spendsheet/upload-zone'
@@ -109,6 +110,7 @@ export default function SpendsheetPage() {
       } else {
         setTransactions(categorized)
         setAppState('report')
+        trackEvent('report_generated')
       }
     } catch (err) {
       console.error('Categorization error:', err)
@@ -126,6 +128,7 @@ export default function SpendsheetPage() {
     setTransactions(merged)
     setShowReviewModal(false)
     setAppState('report')
+    trackEvent('report_generated')
   }
 
   const handleStartOver = () => {

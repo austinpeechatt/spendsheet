@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import { Upload, X, AlertCircle, FileText } from 'lucide-react'
+import { trackEvent } from '@/lib/analytics'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -55,6 +56,7 @@ export function UploadZone({ onTransactionsReady }: UploadZoneProps) {
 
       setFiles(prev => [...prev, { name: file.name, transactions: parsed.transactions }])
       setError(null)
+      trackEvent('upload_started')
     } catch (err) {
       console.error(err)
       setError("We couldn't recognize this format. Supported: Amex, Chase, Discover, Capital One.")
@@ -90,6 +92,7 @@ export function UploadZone({ onTransactionsReady }: UploadZoneProps) {
     const sampleTransactions = loadSampleData()
     setFiles([{ name: 'sample_data.csv', transactions: sampleTransactions }])
     setError(null)
+    trackEvent('sample_data_used')
   }
 
   const handleContinue = () => {

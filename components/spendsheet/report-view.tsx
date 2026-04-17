@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { Copy, Download, Save, RotateCcw, Check, CreditCard, Trash2 } from 'lucide-react'
+import { trackEvent } from '@/lib/analytics'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -158,12 +159,13 @@ export function ReportView({
     }
     saveReport(report)
     setSaved(true)
+    trackEvent('report_saved')
     setTimeout(() => setSaved(false), 2000)
   }
 
   const handleDownloadPDF = () => {
-    // For now, we'll use window.print() as a simple PDF solution
     window.print()
+    trackEvent('pdf_downloaded')
   }
 
   return (

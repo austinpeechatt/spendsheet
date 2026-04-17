@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { DM_Sans } from 'next/font/google'
 import { ShaderBackground } from '@/components/ui/shader-background'
 import './globals.css'
@@ -29,6 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark bg-background">
+      <head>
+        <Script
+          defer
+          data-domain="spendsheet.app"
+          src="https://plausible.io/js/script.js"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={`${dmSans.className} antialiased`}>
         <ShaderBackground />
         <div className="relative z-10">
