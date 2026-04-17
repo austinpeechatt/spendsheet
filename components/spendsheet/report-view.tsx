@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import { Copy, Download, Save, RotateCcw, Check } from 'lucide-react'
-import Image from 'next/image'
+import { Copy, Download, Save, RotateCcw, Check, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -20,8 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { ChartContainer } from '@/components/ui/chart'
-import { Bar, BarChart, XAxis, YAxis, Cell, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { Transaction, ReportData, SavedReport } from '@/lib/types'
 import { generateReportData, formatCurrency } from '@/lib/report-utils'
 import { saveReport } from '@/lib/storage'
@@ -155,7 +153,7 @@ export function ReportView({
       {/* Sticky action buttons */}
       <div className="sticky top-0 z-20 bg-background/95 backdrop-blur py-4 -mx-4 px-4 flex items-center gap-3 border-b border-border print:hidden">
         <div className="flex items-center gap-2 mr-auto">
-          <Image src="/logo.png" alt="Spendsheet" width={24} height={24} className="invert brightness-90" />
+          <CreditCard className="w-5 h-5 text-accent" />
           <span className="text-base font-semibold tracking-tight text-foreground">Spendsheet</span>
         </div>
         <Button variant="ghost" size="sm" onClick={onStartOver}>
@@ -257,40 +255,44 @@ export function ReportView({
         </div>
       </section>
 
-      {/* Bar Chart */}
+      {/* Pie Chart */}
       <section className="space-y-3 print:hidden">
         <h2 className="text-xl font-medium text-foreground">Spending by Category</h2>
-        <ChartContainer
-          config={{}}
-          className="h-80 w-full"
-        >
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              layout="vertical"
-              margin={{ top: 0, right: 20, bottom: 0, left: 80 }}
-            >
-              <XAxis
-                type="number"
-                tickFormatter={(v) => `$${v}`}
-                stroke="#999999"
-                fontSize={12}
-              />
-              <YAxis
-                type="category"
-                dataKey="category"
-                stroke="#999999"
-                fontSize={12}
-                width={75}
-              />
-              <Bar dataKey="total" radius={[0, 4, 4, 0]}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={120}
+                paddingAngle={2}
+                dataKey="total"
+                nameKey="category"
+                stroke="none"
+              >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
-              </Bar>
-            </BarChart>
+              </Pie>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0]
+                    return (
+                      <div className="bg-card border border-border rounded-lg px-4 py-2 shadow-lg">
+                        <p className="text-sm font-medium text-foreground">{data.name}</p>
+                        <p className="text-lg font-semibold text-accent">{formatCurrency(data.value as number)}</p>
+                      </div>
+                    )
+                  }
+                  return null
+                }}
+              />
+            </PieChart>
           </ResponsiveContainer>
-        </ChartContainer>
+        </div>
       </section>
 
       {/* Transaction Table */}
@@ -298,34 +300,34 @@ export function ReportView({
         <h2 className="text-xl font-medium text-foreground">All Transactions</h2>
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="sticky top-16 bg-background z-10">
-              <TableRow className="hover:bg-transparent">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent border-b-2 border-border">
                 <TableHead
-                  className="cursor-pointer hover:text-foreground transition-colors"
+                  className="cursor-pointer hover:text-foreground transition-colors text-xs font-bold uppercase tracking-wider text-muted-foreground py-3"
                   onClick={() => handleSort('date')}
                 >
                   Date {sortField === 'date' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
                 <TableHead
-                  className="cursor-pointer hover:text-foreground transition-colors"
+                  className="cursor-pointer hover:text-foreground transition-colors text-xs font-bold uppercase tracking-wider text-muted-foreground py-3"
                   onClick={() => handleSort('description')}
                 >
                   Description {sortField === 'description' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
                 <TableHead
-                  className="text-right cursor-pointer hover:text-foreground transition-colors"
+                  className="text-right cursor-pointer hover:text-foreground transition-colors text-xs font-bold uppercase tracking-wider text-muted-foreground py-3"
                   onClick={() => handleSort('amount')}
                 >
                   Amount {sortField === 'amount' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
                 <TableHead
-                  className="cursor-pointer hover:text-foreground transition-colors"
+                  className="cursor-pointer hover:text-foreground transition-colors text-xs font-bold uppercase tracking-wider text-muted-foreground py-3"
                   onClick={() => handleSort('category')}
                 >
                   Category {sortField === 'category' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
                 <TableHead
-                  className="cursor-pointer hover:text-foreground transition-colors"
+                  className="cursor-pointer hover:text-foreground transition-colors text-xs font-bold uppercase tracking-wider text-muted-foreground py-3"
                   onClick={() => handleSort('paymentMethod')}
                 >
                   Card {sortField === 'paymentMethod' && (sortDirection === 'asc' ? '↑' : '↓')}
