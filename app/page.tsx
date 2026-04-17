@@ -178,7 +178,7 @@ export default function SpendsheetPage() {
                       userNotes={userNotes}
                       onUserNotesChange={setUserNotes}
                       onGenerate={handleGenerate}
-                      isLoading={appState === 'loading'}
+                      isLoading={appState as string === 'loading'}
                     />
                   )}
 
