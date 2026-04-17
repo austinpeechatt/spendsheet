@@ -147,7 +147,7 @@ export function ReportView({
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur py-4 -mx-4 px-4 flex items-center gap-3 border-b border-border print:hidden">
         <div className="flex items-center gap-2 mr-auto">
           <CreditCard className="w-5 h-5 text-accent" />
-          <span className="text-base font-semibold tracking-tight text-foreground">Credi</span>
+          <span className="text-base font-semibold tracking-tight text-foreground">Spendsheet</span>
         </div>
         <Button variant="ghost" size="sm" onClick={onStartOver}>
           <RotateCcw className="w-4 h-4 mr-2" />
@@ -157,7 +157,7 @@ export function ReportView({
           {saved ? <Check className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
           {saved ? 'Saved!' : 'Save to browser'}
         </Button>
-        <Button size="sm" onClick={handleDownloadPDF}>
+        <Button size="sm" onClick={handleDownloadPDF} className="bg-accent text-[#0A0A0A] hover:bg-accent/85">
           <Download className="w-4 h-4 mr-2" />
           Download PDF
         </Button>

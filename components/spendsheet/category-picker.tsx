@@ -140,7 +140,7 @@ export function CategoryPicker({
           ) : (
             <Badge
               variant="outline"
-              className="px-3 py-1.5 cursor-pointer hover:bg-secondary text-sm border-dashed"
+              className="px-3 py-1.5 cursor-pointer hover:bg-secondary text-sm border-dashed text-accent border-accent/50 hover:border-accent"
               onClick={() => setShowCustomInput(true)}
             >
               <Plus className="w-3 h-3 mr-1.5" />
@@ -166,7 +166,7 @@ export function CategoryPicker({
       <Button
         onClick={onGenerate}
         disabled={isLoading || selectedCategories.length === 0}
-        className="w-full h-14 text-lg font-medium"
+        className="w-full h-14 text-lg font-medium bg-accent text-[#0A0A0A] hover:bg-accent/85"
       >
         {isLoading ? 'Processing...' : 'Generate Report →'}
       </Button>

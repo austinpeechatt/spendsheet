@@ -213,7 +213,7 @@ export function UploadZone({ onTransactionsReady }: UploadZoneProps) {
         <div className="pt-4">
           <Button
             onClick={handleContinue}
-            className="w-full h-12 text-base font-medium"
+            className="w-full h-12 text-base font-medium bg-accent text-[#0A0A0A] hover:bg-accent/85"
           >
             Continue to Categories →
           </Button>
