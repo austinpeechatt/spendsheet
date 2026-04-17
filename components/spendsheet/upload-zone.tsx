@@ -29,7 +29,7 @@ export function UploadZone({ onTransactionsReady }: UploadZoneProps) {
   const months = getMonthsFromTransactions(allTransactions)
 
   const processFile = useCallback(async (file: File) => {
-    if (!file.name.endsWith('.csv')) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
       setError("That doesn't look like a CSV. Try re-exporting from your bank.")
       return
     }
