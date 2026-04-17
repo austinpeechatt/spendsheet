@@ -10,6 +10,8 @@ interface CSVFormat {
   creditColumn?: string
   // Date format for parsing
   dateFormat: 'MM/DD/YYYY' | 'YYYY-MM-DD' | 'MM/DD/YY'
+  // If true, negate amounts (Chase uses negative for purchases)
+  negateAmount?: boolean
 }
 
 const CSV_FORMATS: Record<string, CSVFormat> = {
@@ -18,7 +20,7 @@ const CSV_FORMATS: Record<string, CSVFormat> = {
     dateColumn: 'Date',
     descriptionColumn: 'Description',
     amountColumn: 'Amount',
-    dateFormat: 'MM/DD/YY',
+    dateFormat: 'MM/DD/YYYY',
   },
   chase: {
     name: 'Chase',
@@ -26,6 +28,7 @@ const CSV_FORMATS: Record<string, CSVFormat> = {
     descriptionColumn: 'Description',
     amountColumn: 'Amount',
     dateFormat: 'MM/DD/YYYY',
+    negateAmount: true,
   },
   chaseFreedom: {
     name: 'Chase Freedom',
@@ -33,6 +36,7 @@ const CSV_FORMATS: Record<string, CSVFormat> = {
     descriptionColumn: 'Description',
     amountColumn: 'Amount',
     dateFormat: 'MM/DD/YYYY',
+    negateAmount: true,
   },
   discover: {
     name: 'Discover',
@@ -76,11 +80,7 @@ function detectFormat(headers: string[]): CSVFormat | null {
   const headerSet = new Set(headers.map(h => h.toLowerCase().trim()))
 
   if (headerSet.has('date') && headerSet.has('description') && headerSet.has('amount')) {
-    // Check if it's Amex format (has specific columns)
-    if (headers.some(h => h.toLowerCase().includes('card member'))) {
-      return CSV_FORMATS.amex
-    }
-    return CSV_FORMATS.amex // Default to Amex-like format
+    return CSV_FORMATS.amex
   }
 
   if (headerSet.has('transaction date') && headerSet.has('description')) {
@@ -101,9 +101,32 @@ function detectFormat(headers: string[]): CSVFormat | null {
   return null
 }
 
+/**
+ * Find the actual header row in a CSV that may have metadata rows above it
+ * (e.g., Amex CSVs have account info before the header row)
+ */
+function findHeaderRow(lines: string[]): { headerIndex: number; headers: string[] } {
+  const knownHeaders = ['date', 'description', 'amount', 'transaction date', 'trans. date', 'trans date', 'debit', 'credit']
+
+  for (let i = 0; i < Math.min(lines.length, 15); i++) {
+    const parsed = parseCSVLine(lines[i])
+    const lower = parsed.map(h => h.toLowerCase().trim())
+
+    // Check if this line contains at least 2 known header columns
+    const matches = lower.filter(h => knownHeaders.includes(h))
+    if (matches.length >= 2) {
+      return { headerIndex: i, headers: parsed }
+    }
+  }
+
+  // Fallback: use line 0
+  return { headerIndex: 0, headers: parseCSVLine(lines[0]) }
+}
+
 function parseDate(dateStr: string, format: string): Date {
-  const parts = dateStr.split(/[/-]/)
-  
+  const cleaned = dateStr.trim()
+  const parts = cleaned.split(/[/-]/)
+
   if (format === 'YYYY-MM-DD') {
     return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
   } else if (format === 'MM/DD/YYYY') {
@@ -113,7 +136,7 @@ function parseDate(dateStr: string, format: string): Date {
     const fullYear = year < 50 ? 2000 + year : 1900 + year
     return new Date(fullYear, parseInt(parts[0]) - 1, parseInt(parts[1]))
   }
-  
+
   return new Date(dateStr)
 }
 
@@ -134,7 +157,8 @@ export function parseCSV(content: string, fileName: string): ParsedFile {
     throw new Error('CSV file is empty or has no data rows')
   }
 
-  const headers = parseCSVLine(lines[0])
+  // Find the real header row (skip metadata rows)
+  const { headerIndex, headers } = findHeaderRow(lines)
   const format = detectFormat(headers)
 
   if (!format) {
@@ -150,26 +174,39 @@ export function parseCSV(content: string, fileName: string): ParsedFile {
   const debitIdx = format.debitColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.debitColumn.toLowerCase()) : -1
   const creditIdx = format.creditColumn ? headers.findIndex(h => h.toLowerCase().trim() === format.creditColumn.toLowerCase()) : -1
 
-  for (let i = 1; i < lines.length; i++) {
+  // Start parsing from the row AFTER the header
+  for (let i = headerIndex + 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i])
     if (values.length < Math.max(dateIdx, descIdx, amountIdx) + 1) continue
 
     const dateStr = values[dateIdx]
     const description = values[descIdx]
-    
+
+    // Skip empty descriptions or payment rows
+    if (!description || description.trim() === '') continue
+
     let amount: number
     if (amountIdx >= 0) {
       amount = parseFloat(values[amountIdx]?.replace(/[$,]/g, '') || '0')
+      // Chase uses negative amounts for purchases — flip them
+      if (format.negateAmount) {
+        amount = -amount
+      }
     } else {
       // Capital One style with separate debit/credit
       const debit = parseFloat(values[debitIdx]?.replace(/[$,]/g, '') || '0')
       const credit = parseFloat(values[creditIdx]?.replace(/[$,]/g, '') || '0')
-      amount = debit || -credit // Debit is positive spend, credit is negative (refund)
+      amount = debit || -credit
     }
 
     if (!dateStr || isNaN(amount)) continue
 
+    // Skip date strings that don't look like dates
+    if (!/\d/.test(dateStr)) continue
+
     const date = parseDate(dateStr, format.dateFormat)
+    if (isNaN(date.getTime())) continue
+
     const originalRow: Record<string, string> = {}
     headers.forEach((h, idx) => {
       originalRow[h] = values[idx] || ''
@@ -195,7 +232,7 @@ export function parseCSV(content: string, fileName: string): ParsedFile {
 
 export function getMonthsFromTransactions(transactions: Transaction[]): { month: number; year: number; label: string }[] {
   const months = new Map<string, { month: number; year: number; label: string }>()
-  
+
   for (const t of transactions) {
     const date = new Date(t.date)
     const key = `${date.getFullYear()}-${date.getMonth()}`
